@@ -266,18 +266,18 @@ module String =
 
     let trim (input : string) = input.Trim()
 
-    let splitIntoMatching regexPattern (input : string) =
+    let findMatching regexPattern (input : string) =
         Regex.Matches(input, regexPattern)
         |> Seq.map (fun x -> x.Value)
         |> List.ofSeq
 
-    let capture regexPattern (input : string) =
+    let captureFirstMatch regexPattern (input : string) =
         Regex.Match(input, regexPattern).Groups
         |> Seq.skip 1
         |> Seq.map (fun x -> x.Value)
         |> List.ofSeq
 
-    let captures regexPattern (input : string) =
+    let captureMatching regexPattern (input : string) =
         Regex.Matches(input, regexPattern)
         |> Seq.map (fun m ->
             m.Groups
@@ -333,8 +333,8 @@ let (|StartsWith|_|) (p:string) (s:string) =
     then Some(s.Substring(p.Length))
     else None
 
-let (|Capture|_|) regex (s:string) =
-    match String.capture regex s with
+let (|CaptureFirstMatch|_|) regex (s:string) =
+    match String.captureFirstMatch regex s with
     | [] -> None
     | items -> Some(items)
 

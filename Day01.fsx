@@ -10,7 +10,7 @@ open Helper
 
 let part1 lines =
     lines
-    |> Seq.map (String.splitIntoMatching "\d")
+    |> Seq.map (String.findMatching "\d")
     |> Seq.filter (List.isEmpty >> not)
     |> Seq.map (fun digits ->  int64 $"{digits.[0]}{List.last digits}")
     |> Seq.sum
@@ -24,8 +24,8 @@ let wordToDigit = function
 
 let part2 lines =
     lines
-    |> Seq.map (String.captures "(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
-    |> Seq.map (List.map List.head) // we care about the first (and only) group in each capture
+    |> Seq.map (String.captureMatching "(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
+    |> Seq.map (List.map List.head) // we care about the first (and only) group captured in each match
     |> Seq.map (fun digits -> int64 $"{wordToDigit digits.[0]}{wordToDigit (List.last digits)}")
     |> Seq.sum
     // Correct Answer: 55701, took: 8,599µs
