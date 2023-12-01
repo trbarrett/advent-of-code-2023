@@ -35,6 +35,9 @@ module Puzzle =
     let measurePart1µs f input = measurePartµs 1 f input
     let measurePart2µs f input = measurePartµs 2 f input
 
+    let public readLines inputName =
+        sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
+        |> File.ReadLines
 
     let public readLinesWithHashComments inputName =
         sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName

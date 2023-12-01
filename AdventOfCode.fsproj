@@ -9,6 +9,7 @@
         <None Include="Helper.fsx" />
         <None Include="AStar.fsx" />
         <None Include="Dijkstra.fsx" />
+        <None Include="Day01.fsx" />
     </ItemGroup>
 
     <ItemGroup>
