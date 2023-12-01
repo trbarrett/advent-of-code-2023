@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="Helper.fsx" />
+        <None Include="AStar.fsx" />
+        <None Include="Dijkstra.fsx" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Expecto" Version="9.0.4" />
+    </ItemGroup>
+
+</Project>
