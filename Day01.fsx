@@ -1,7 +1,7 @@
 #load "./Helper.fsx"
 open Helper
 
-// Day 1: Trebuchet?!
+// Day 2: Trebuchet?!
 //
 // Part 1 - Concat the first and last numbers of each line, then sum them
 // Part 2 - Concat the first and last numbers of each line then sum them. Each
@@ -24,7 +24,7 @@ let wordToDigit = function
 
 let part2 lines =
     lines
-    |> Seq.map (String.captureMatching "(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
+    |> Seq.map (String.captureAllMatching "(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
     |> Seq.map (List.map List.head) // we care about the first (and only) group captured in each match
     |> Seq.map (fun digits -> int64 $"{wordToDigit digits.[0]}{wordToDigit (List.last digits)}")
     |> Seq.sum

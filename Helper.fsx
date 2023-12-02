@@ -59,13 +59,13 @@ module Tuple =
     let flip (x,y) = y, x
 
 module Map =
-    let extendListValue key value m =
+    let addToListValue key value m =
         match m |> Map.tryFind key with
         | None -> m |> Map.add key [value]
         | Some existing -> m |> Map.add key (value::existing)
 
-    let ofOneToManySeq xs : Map<'a, 'b list> =
-        Seq.fold (fun m (x,y) -> m |> extendListValue x y) Map.empty xs
+    let ofTuples xs : Map<'a, 'b list> =
+        Seq.fold (fun m (x,y) -> m |> addToListValue x y) Map.empty xs
 
     let flattenOneToMany m =
         let flatten = (fun (KeyValue(x, ys)) -> ys |> Seq.map (mkTuple x))
@@ -90,7 +90,7 @@ module Map =
            | Some aValue, None -> acc |> Map.add key aValue
            | Some aValue, Some bValue -> acc |> Map.add key (f aValue bValue))
 
-    let mergeAll f maps =
+    let mergeMany f maps =
        let allKeys = maps |> Seq.collect keys |> Seq.distinct
 
        (Map [], allKeys)
@@ -98,6 +98,7 @@ module Map =
            // find the values in all the maps for a given key and combine them
            // with function f
            let values = maps |> Seq.map (Map.tryFind key)
+           let values = values |> Seq.choose id
            acc |> Map.add key (f values))
 
     // Update a value in a map by first finding it, calling a given function
@@ -249,6 +250,20 @@ module Seq =
     let toString (separator : string) (s : seq<'a>) =
         String.Join(separator, s)
 
+    let tryMin (s : seq<'a>) =
+        (None, s)
+        ||> Seq.fold (fun acc x ->
+            match acc with
+            | None -> Some x
+            | Some y -> Some (min x y))
+
+    let tryMax (s : seq<'a>) =
+        (None, s)
+        ||> Seq.fold (fun acc x ->
+            match acc with
+            | None -> Some x
+            | Some y -> Some (max x y))
+
 
 module String =
 
@@ -271,13 +286,13 @@ module String =
         |> Seq.map (fun x -> x.Value)
         |> List.ofSeq
 
-    let captureFirstMatch regexPattern (input : string) =
+    let capture regexPattern (input : string) =
         Regex.Match(input, regexPattern).Groups
         |> Seq.skip 1
         |> Seq.map (fun x -> x.Value)
         |> List.ofSeq
 
-    let captureMatching regexPattern (input : string) =
+    let captureAllMatching regexPattern (input : string) =
         Regex.Matches(input, regexPattern)
         |> Seq.map (fun m ->
             m.Groups
@@ -333,8 +348,8 @@ let (|StartsWith|_|) (p:string) (s:string) =
     then Some(s.Substring(p.Length))
     else None
 
-let (|CaptureFirstMatch|_|) regex (s:string) =
-    match String.captureFirstMatch regex s with
+let (|Capture|_|) regex (s:string) =
+    match String.capture regex s with
     | [] -> None
     | items -> Some(items)
 
