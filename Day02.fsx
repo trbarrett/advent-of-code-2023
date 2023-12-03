@@ -35,7 +35,7 @@ let parseLine line =
     let subgames =
         subgames
         |> String.split ';'
-        |> Array.map (String.captureAllMatching "(\d+) (\w+),?")
+        |> Array.map (String.captureAll "(\d+) (\w+),?")
         |> Array.map (List.map (fun [count; colour] -> colour, int count) >> Map)
     int gameId, subgames
 

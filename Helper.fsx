@@ -292,12 +292,21 @@ module String =
         |> Seq.map (fun x -> x.Value)
         |> List.ofSeq
 
-    let captureAllMatching regexPattern (input : string) =
+    let captureAll regexPattern (input : string) =
         Regex.Matches(input, regexPattern)
         |> Seq.map (fun m ->
             m.Groups
             |> Seq.skip 1
             |> Seq.map (fun x -> x.Value)
+            |> List.ofSeq)
+        |> List.ofSeq
+
+    let captureAllWithIndex regexPattern (input : string) =
+        Regex.Matches(input, regexPattern)
+        |> Seq.map (fun m ->
+            m.Groups
+            |> Seq.skip 1
+            |> Seq.map (fun x -> x.Index, x.Value)
             |> List.ofSeq)
         |> List.ofSeq
 

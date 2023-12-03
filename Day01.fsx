@@ -24,7 +24,7 @@ let wordToDigit = function
 
 let part2 lines =
     lines
-    |> Seq.map (String.captureAllMatching "(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
+    |> Seq.map (String.captureAll "(?=(one|two|three|four|five|six|seven|eight|nine|\d))")
     |> Seq.map (List.map List.head) // we care about the first (and only) group captured in each match
     |> Seq.map (fun digits -> int64 $"{wordToDigit digits.[0]}{wordToDigit (List.last digits)}")
     |> Seq.sum

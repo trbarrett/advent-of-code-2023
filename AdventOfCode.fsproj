@@ -11,6 +11,7 @@
         <None Include="Dijkstra.fsx" />
         <None Include="Day01.fsx" />
         <None Include="Day02.fsx" />
+        <None Include="Day03.fsx" />
     </ItemGroup>
 
     <ItemGroup>
