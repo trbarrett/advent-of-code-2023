@@ -13,35 +13,30 @@ let part1 cards =
 let part2 cards =
     // Approach :
     // * We get the amount of matches for each card
-    // * We create a Map with the # of instance of each card, starting at 1
-    // * we use unfold on the card & map where we:
-    //   * calculate the # of cards for the next run of numbers
-    //   * we merge those calculated numbers with our existing list
-    //   * we return the instances of the current card, the remaining cards, and our updated map
+    // * We create a List with the # of instance of each card (each starting with 1)
+    // * we use unfold on the card & instances list where we:
+    //   * increase the # of instances based on the # of matches we have
+    //   * return the instances of the current card, the remaining cards, and our updated map
     // * finally we sum the unfolded result
     cards
     |> List.map (fun (winners, num) -> Set.intersect (Set num) (Set winners) |> Set.count)
-    |> List.mapi mkTuple
-    |> fun xs -> xs, List.init (List.length xs) (fun i -> i, 1) |> Map // start with one instance each
-    |> List.unfold (fun (remaining, m) ->
-        match remaining with
-        | [] -> None
-        | (i,matches)::xs ->
-            let instances = m |> Map.find i
-            let update = [ for k in 1..matches -> (i+k, instances)] |> Map
-            let m = Map.merge (+) m update
-            Some (instances, (xs, m)))
+    |> fun xs -> xs, List.replicate (List.length xs) 1
+    |> List.unfold (fun (remaining, il) ->
+        match remaining, il with
+        | [], _ -> None
+        | matches::xs, instances::il ->
+            let il = il |> List.mapi (fun i x -> if i < matches then x + instances else x)
+            Some (instances, (xs, il)))
     |> List.sum
-    // Part 2 result: 5833065 took: 17,850µs // took 47 minutes to write solution (part1 + part2)
+    // Part 2 result: 5833065 took: 1,978µs // took 47 minutes to write solution (part1 + part2)
 
 let parseLine line =
     let [winners; nums] = String.capture ":(.*) \|(.*)$" line
     String.findMatching "\d+" winners, String.findMatching "\d+" nums
 
 let cards =
-    Puzzle.readLines "day04.txt"
-    |> Seq.map parseLine
-    |> Seq.toList
+    Puzzle.readLines "day04.txt" |> Seq.toList
+    |> List.map parseLine
 
 Puzzle.warmup part1 part2 cards // warm it up for more accurate timings
 
