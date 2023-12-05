@@ -58,6 +58,9 @@ let (|KeyValue|) (keyValuePair : KeyValuePair<'k, 'v>) : 'k * 'v =
 module Tuple =
     let flip (x,y) = y, x
 
+    let fromSeq xs =
+        Seq.item 0 xs, Seq.item 1 xs
+
 module Map =
     let addToListValue key value m =
         match m |> Map.tryFind key with

@@ -13,16 +13,16 @@ let part1 cards =
 let part2 cards =
     // Approach :
     // * We get the amount of matches for each card
-    // * We create a List with the # of instance of each card (each starting with 1)
+    // * We create a List to store the # of instance of each card (each starting with 1)
     // * we use unfold on the card & instances list where we:
-    //   * increase the # of instances based on the # of matches we have
-    //   * return the instances of the current card, the remaining cards, and our updated map
+    //   * increase the # of instances for upcoming cards based on the # of matches we have
+    //   * return the # of instances of the current card + the remaining cards
     // * finally we sum the unfolded result
     cards
     |> List.map (fun (winners, num) -> Set.intersect (Set num) (Set winners) |> Set.count)
     |> fun xs -> xs, List.replicate (List.length xs) 1
-    |> List.unfold (fun (remaining, il) ->
-        match remaining, il with
+    |> List.unfold (fun (remainingCards, il) ->
+        match remainingCards, il with
         | [], _ -> None
         | matches::xs, instances::il ->
             let il = il |> List.mapi (fun i x -> if i < matches then x + instances else x)
