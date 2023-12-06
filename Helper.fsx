@@ -21,7 +21,7 @@ module Puzzle =
     let measurePartms partN f input =
         let sw = startStopwatch ()
         let result = f input
-        printfn $"Part {partN} result: {result} took: {sw.ElapsedMilliseconds}ms"
+        printfn $"Part {partN} result: {result} took: {sw.ElapsedMilliseconds:N0}ms"
 
     let measurePart1ms f input = measurePartms 1 f input
     let measurePart2ms f input = measurePartms 2 f input
@@ -252,6 +252,9 @@ module Seq =
 
     let toString (separator : string) (s : seq<'a>) =
         String.Join(separator, s)
+
+    let printn (s : seq<'a>) =
+        printfn "%s" (String.Join(",", s))
 
     let tryMin (s : seq<'a>) =
         (None, s)
