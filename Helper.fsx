@@ -169,6 +169,10 @@ module List =
         | k, (x::xs) ->
             List.map ((@) [x]) (combinations (k-1) xs) @ combinations k xs
 
+    let crossJoinSelf xs = xs |> List.collect(fun a -> xs |> List.map (mkTuple a))
+
+    let crossJoin2 xs ys = xs |> List.collect(fun a -> ys |> List.map (mkTuple a))
+
     let replaceAt replaceAt replacement xs =
         xs
         |> List.mapi (fun i x ->
@@ -255,6 +259,9 @@ module Seq =
 
     let printn (s : seq<'a>) =
         printfn "%s" (String.Join(",", s))
+
+    let printns (s : seq<'a>) =
+        printfn "%s" (String.Join(Environment.NewLine, s))
 
     let tryMin (s : seq<'a>) =
         (None, s)
@@ -407,6 +414,12 @@ module Math =
         |> Seq.rev
         |> Seq.mapi (fun i x -> (int32 (pown 2 i)) * x )
         |> Seq.sum
+
+    let rec gcd x y =
+        if y = 0L then x
+        else gcd y (x % y)
+
+    let lcm a b = a*b/(gcd a b)
 
 
 let splitOnEmptyLines seq = Seq.split "" seq
