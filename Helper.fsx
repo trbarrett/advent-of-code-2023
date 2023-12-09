@@ -39,6 +39,10 @@ module Puzzle =
         sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
         |> File.ReadLines
 
+    let public readLinesL inputName =
+        sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
+        |> File.ReadLines |> Seq.toList
+
     let public readLinesWithHashComments inputName =
         sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
         |> File.ReadLines

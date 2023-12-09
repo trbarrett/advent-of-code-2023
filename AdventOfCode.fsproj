@@ -18,6 +18,7 @@
         <None Include="Day06.fsx" />
         <None Include="Day07.fsx" />
         <None Include="Day08.fsx" />
+        <None Include="Day09.fsx" />
     </ItemGroup>
 
     <ItemGroup>
