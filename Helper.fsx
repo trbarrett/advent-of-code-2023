@@ -43,6 +43,10 @@ module Puzzle =
         sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
         |> File.ReadLines |> Seq.toList
 
+    let public readLinesA inputName =
+        sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
+        |> File.ReadLines |> Seq.toArray
+
     let public readLinesWithHashComments inputName =
         sprintf "%s/puzzledata/%s" __SOURCE_DIRECTORY__ inputName
         |> File.ReadLines
@@ -244,6 +248,11 @@ module Array =
         | Some idx -> Array.sub xs 0 (idx + 1)
         | None -> Array.copy xs
 
+    let foldi fold state source  =
+       ((state, 0), source)
+       ||> Array.fold(fun (acc,i) c -> (fold i acc c,i + 1))
+       |> fst
+
 module Seq =
     let groupByTuple (xs : ('a * 'b) seq) =
         xs
@@ -266,6 +275,11 @@ module Seq =
 
     let printns (s : seq<'a>) =
         printfn "%s" (String.Join(Environment.NewLine, s))
+
+    let foldi fold state source  =
+       ((state, 0), source)
+       ||> Seq.fold(fun (acc,i) c -> (fold i acc c,i + 1))
+       |> fst
 
     let tryMin (s : seq<'a>) =
         (None, s)
@@ -368,6 +382,9 @@ module ArrayOfArrays =
                       yield (mapping rowNo colNo aoa.[rowNo].[colNo]) |] |]
 
     let transpose = Array.transpose
+
+    let print (tiles : 'a [] [])  =
+        tiles |> Array.iter (fun row -> printfn "%s" (String.Join("", row)))
 
 let (|StartsWith|_|) (p:string) (s:string) =
     if s.StartsWith(p)
