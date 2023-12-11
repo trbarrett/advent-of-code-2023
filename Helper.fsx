@@ -177,9 +177,7 @@ module List =
         | k, (x::xs) ->
             List.map ((@) [x]) (combinations (k-1) xs) @ combinations k xs
 
-    let crossJoinSelf xs = xs |> List.collect(fun a -> xs |> List.map (mkTuple a))
-
-    let crossJoin2 xs ys = xs |> List.collect(fun a -> ys |> List.map (mkTuple a))
+    let crossJoin xs ys = xs |> List.collect(fun a -> ys |> List.map (mkTuple a))
 
     let replaceAt replaceAt replacement xs =
         xs
@@ -248,10 +246,19 @@ module Array =
         | Some idx -> Array.sub xs 0 (idx + 1)
         | None -> Array.copy xs
 
-    let foldi fold state source  =
+    let foldi fold state source =
        ((state, 0), source)
        ||> Array.fold(fun (acc,i) c -> (fold i acc c,i + 1))
        |> fst
+
+    let foldBacki fold array state =
+       (array, (state, (Array.length array - 1)))
+       ||> Array.foldBack(fun c (acc,i) -> (fold i c acc , i - 1))
+       |> fst
+
+    let findIndexes f xs =
+        (xs, [])
+        ||> foldBacki (fun i x acc -> if (f x) then i::acc else acc)
 
 module Seq =
     let groupByTuple (xs : ('a * 'b) seq) =
@@ -280,6 +287,8 @@ module Seq =
        ((state, 0), source)
        ||> Seq.fold(fun (acc,i) c -> (fold i acc c,i + 1))
        |> fst
+
+    let crossJoin xs ys = xs |> Seq.collect(fun a -> ys |> Seq.map (mkTuple a))
 
     let tryMin (s : seq<'a>) =
         (None, s)
