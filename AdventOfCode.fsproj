@@ -21,6 +21,7 @@
         <None Include="Day09.fsx" />
         <None Include="Day10.fsx" />
         <None Include="Day11.fsx" />
+        <None Include="Day12.fsx" />
         <None Include="Day13.fsx" />
         <None Include="Day14.fsx" />
         <None Include="Day15.fsx" />

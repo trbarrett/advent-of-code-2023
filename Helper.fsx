@@ -301,6 +301,9 @@ module Seq =
             | _, curr::rest -> (x::curr)::rest
             | _ -> failwith "Not Possible")
 
+    let join (separator : string) (s : seq<'a>) =
+        String.Join(separator, s)
+
     let toString (separator : string) (s : seq<'a>) =
         String.Join(separator, s)
 
@@ -376,6 +379,11 @@ module String =
             |> Seq.map (fun x -> x.Index, x.Value)
             |> List.ofSeq)
         |> List.ofSeq
+
+    let replaceAt index char (str : string) =
+        let arr = str.ToCharArray()
+        arr.[index] <- char
+        String arr
 
 module ArrayOfArrays =
     let tryFindIndex predicate (aoa : 'T[][]) =
