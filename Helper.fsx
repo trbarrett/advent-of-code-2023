@@ -260,6 +260,13 @@ module Array =
         (xs, [])
         ||> foldBacki (fun i x acc -> if (f x) then i::acc else acc)
 
+    let split separator arr =
+        let splitPoints = findIndexes ((=) separator) arr
+        let splitRanges = List.pairwise (-1::splitPoints@[arr.Length])
+        [| for (start, stop) in splitRanges do
+            let subArr = Array.sub arr (start + 1) (stop - (start + 1))
+            if subArr <> Array.empty then yield subArr |]
+
 module Seq =
     let groupByTuple (xs : ('a * 'b) seq) =
         xs
