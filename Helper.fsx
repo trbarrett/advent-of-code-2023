@@ -1,6 +1,7 @@
 #I __SOURCE_DIRECTORY__
 
 open System
+open System.Buffers
 open System.Text.RegularExpressions
 open System.IO
 open System.Collections.Generic
@@ -237,6 +238,15 @@ module List =
             | Choice2Of3 b -> (accA, b::accB, accC)
             | Choice3Of3 c -> (accA, accB, c::accC))
 
+    let foldBacki fold xs state =
+       (xs, (state, (List.length xs - 1)))
+       ||> List.foldBack(fun c (acc,i) -> (fold i c acc , i - 1))
+       |> fst
+
+    let findIndexes f xs =
+        (xs, [])
+        ||> foldBacki (fun i x acc -> if (f x) then i::acc else acc)
+
 module Array =
 
     // Works the same as takeWhile, except it will include the first item that
@@ -398,6 +408,13 @@ module ArrayOfArrays =
                       yield (mapping rowNo colNo aoa.[rowNo].[colNo]) |] |]
 
     let transpose = Array.transpose
+
+    let flipVertically = Array.rev
+
+    let flipHorizontally (arr : 't [][]) =
+        arr |> Array.map (fun (row : 't []) ->
+            let lastIndex = Array.length row - 1
+            [| for i in 0..lastIndex -> row.[lastIndex - i] |])
 
     let print (tiles : 'a [] [])  =
         tiles |> Array.iter (fun row -> printfn "%s" (String.Join("", row)))
