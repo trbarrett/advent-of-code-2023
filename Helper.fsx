@@ -70,56 +70,6 @@ module Tuple =
     let fromSeq xs =
         Seq.item 0 xs, Seq.item 1 xs
 
-module Map =
-    let addToListValue key value m =
-        match m |> Map.tryFind key with
-        | None -> m |> Map.add key [value]
-        | Some existing -> m |> Map.add key (value::existing)
-
-    let ofTuples xs : Map<'a, 'b list> =
-        Seq.fold (fun m (x,y) -> m |> addToListValue x y) Map.empty xs
-
-    let flattenOneToMany m =
-        let flatten = (fun (KeyValue(x, ys)) -> ys |> Seq.map (mkTuple x))
-        Seq.collect flatten m
-
-    let keys map =
-        map |> Map.keys |> seq
-
-    let mapValues f m =
-       m |> Map.map (fun _ v -> f v)
-
-    let merge f mapA mapB =
-       let allKeys = [mapA; mapB] |> Seq.collect keys |> Seq.distinct
-
-       (Map [], allKeys)
-       ||> Seq.fold (fun acc key ->
-           let aValue = mapA |> Map.tryFind key
-           let bValue = mapB |> Map.tryFind key
-           match aValue, bValue with
-           | None, None -> failwith "Something has gone very wrong"
-           | None, Some bValue -> acc |> Map.add key bValue
-           | Some aValue, None -> acc |> Map.add key aValue
-           | Some aValue, Some bValue -> acc |> Map.add key (f aValue bValue))
-
-    let mergeMany f maps =
-       let allKeys = maps |> Seq.collect keys |> Seq.distinct
-
-       (Map [], allKeys)
-       ||> Seq.fold (fun acc key ->
-           // find the values in all the maps for a given key and combine them
-           // with function f
-           let values = maps |> Seq.map (Map.tryFind key)
-           let values = values |> Seq.choose id
-           acc |> Map.add key (f values))
-
-    // Update a value in a map by first finding it, calling a given function
-    // with that value (or a default if none was found), then setting it back
-    // in the Map
-    let update key defaultValue f m =
-        let existing = m |> Map.tryFind key |> Option.defaultValue defaultValue
-        m |> Map.add key (f existing)
-
 module Set =
 
     let getExtents points =
@@ -246,6 +196,66 @@ module List =
     let findIndexes f xs =
         (xs, [])
         ||> foldBacki (fun i x acc -> if (f x) then i::acc else acc)
+
+module Map =
+    let addToListValue key value m =
+        match m |> Map.tryFind key with
+        | None -> m |> Map.add key [value]
+        | Some existing -> m |> Map.add key (value::existing)
+
+    let updateListValue key value fn m =
+        m |> Map.change key (function
+            | None -> Some [value]
+            | Some xs ->
+                match List.tryFindIndex fn xs with
+                | None -> Some (value::xs)
+                | Some i -> Some (List.replaceAt i value xs))
+
+    let ofTuples xs : Map<'a, 'b list> =
+        Seq.fold (fun m (x,y) -> m |> addToListValue x y) Map.empty xs
+
+    let flattenOneToMany m =
+        let flatten = (fun (KeyValue(x, ys)) -> ys |> Seq.map (mkTuple x))
+        Seq.collect flatten m
+
+    let keys map =
+        map |> Map.keys |> seq
+
+    let mapValues f m =
+       m |> Map.map (fun _ v -> f v)
+
+    let merge f mapA mapB =
+       let allKeys = [mapA; mapB] |> Seq.collect keys |> Seq.distinct
+
+       (Map [], allKeys)
+       ||> Seq.fold (fun acc key ->
+           let aValue = mapA |> Map.tryFind key
+           let bValue = mapB |> Map.tryFind key
+           match aValue, bValue with
+           | None, None -> failwith "Something has gone very wrong"
+           | None, Some bValue -> acc |> Map.add key bValue
+           | Some aValue, None -> acc |> Map.add key aValue
+           | Some aValue, Some bValue -> acc |> Map.add key (f aValue bValue))
+
+    let mergeMany f maps =
+       let allKeys = maps |> Seq.collect keys |> Seq.distinct
+
+       (Map [], allKeys)
+       ||> Seq.fold (fun acc key ->
+           // find the values in all the maps for a given key and combine them
+           // with function f
+           let values = maps |> Seq.map (Map.tryFind key)
+           let values = values |> Seq.choose id
+           acc |> Map.add key (f values))
+
+    // Update a value in a map by first finding it, calling a given function
+    // with that value (or a default if none was found), then setting it back
+    // in the Map
+    let update key defaultValue f m =
+        // Should use Map.change instead!
+        let existing = m |> Map.tryFind key |> Option.defaultValue defaultValue
+        m |> Map.add key (f existing)
+
 
 module Array =
 
