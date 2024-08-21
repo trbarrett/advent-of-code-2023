@@ -310,6 +310,12 @@ module Seq =
     let printn (s : seq<'a>) =
         printfn "%s" (String.Join(",", s))
 
+    let sprintn (s : seq<'a>) =
+        String.Join(",", s)
+
+    let sprintnb (s : seq<'a>) =
+        String.Join("", s)
+
     let printns (s : seq<'a>) =
         printfn "%s" (String.Join(Environment.NewLine, s))
 
@@ -333,7 +339,6 @@ module Seq =
             match acc with
             | None -> Some x
             | Some y -> Some (max x y))
-
 
 module String =
 
