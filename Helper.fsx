@@ -196,6 +196,14 @@ module List =
     let findIndexes f xs =
         (xs, [])
         ||> foldBacki (fun i x acc -> if (f x) then i::acc else acc)
+    
+    let join s (xs : 'a list list) =
+        match xs with
+        | [] -> []
+        | [xs] -> xs
+        | head::tail ->
+            head::[ for xs in tail do yield s; yield xs]
+            |> List.concat
 
 module Map =
     let addToListValue key value m =
@@ -301,11 +309,20 @@ module Seq =
             | _, curr::rest -> (x::curr)::rest
             | _ -> failwith "Not Possible")
 
+    let join (separator : string) (s : seq<'a>) =
+        String.Join(separator, s)
+
     let toString (separator : string) (s : seq<'a>) =
         String.Join(separator, s)
 
     let printn (s : seq<'a>) =
         printfn "%s" (String.Join(",", s))
+
+    let sprintn (s : seq<'a>) =
+        String.Join(",", s)
+
+    let sprintnb (s : seq<'a>) =
+        String.Join("", s)
 
     let printns (s : seq<'a>) =
         printfn "%s" (String.Join(Environment.NewLine, s))
@@ -330,7 +347,6 @@ module Seq =
             match acc with
             | None -> Some x
             | Some y -> Some (max x y))
-
 
 module String =
 
@@ -376,6 +392,11 @@ module String =
             |> Seq.map (fun x -> x.Index, x.Value)
             |> List.ofSeq)
         |> List.ofSeq
+
+    let replaceAt index char (str : string) =
+        let arr = str.ToCharArray()
+        arr.[index] <- char
+        String arr
 
 module ArrayOfArrays =
     let tryFindIndex predicate (aoa : 'T[][]) =
