@@ -196,6 +196,14 @@ module List =
     let findIndexes f xs =
         (xs, [])
         ||> foldBacki (fun i x acc -> if (f x) then i::acc else acc)
+    
+    let join s (xs : 'a list list) =
+        match xs with
+        | [] -> []
+        | [xs] -> xs
+        | head::tail ->
+            head::[ for xs in tail do yield s; yield xs]
+            |> List.concat
 
 module Map =
     let addToListValue key value m =
