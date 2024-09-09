@@ -3,8 +3,7 @@ open System.Collections.Generic
 open Helper
 
 // Day 12: Hot Springs
-// Approach: Depth first search with memoization
-
+// Approach: Depth first search with memoization (Dynamic Programming)
 
 let describe (springs : char list) (contiguous: int []) =
     (String.fromChars springs) + " " + (Seq.toString "," contiguous)
@@ -114,8 +113,7 @@ let part2 lines =
     let results = lines |> Array.map(fun (springs, contiguous) ->
         solve springs contiguous cache)
     results |> Array.map Option.get |> Array.sum
-    // Part 2 result: 128741994134728 took: 372ms
-
+    // Part 2 result: 128741994134728 took: 262ms
 
 Puzzle.warmup part1 part2 input // warm it up for more accurate timings
 Puzzle.measurePart1ms part1 input

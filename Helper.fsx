@@ -187,6 +187,11 @@ module List =
             | Choice1Of3 a -> (a::accA, accB, accC)
             | Choice2Of3 b -> (accA, b::accB, accC)
             | Choice3Of3 c -> (accA, accB, c::accC))
+        
+    let foldi folder state xs =
+       ((0, state), xs)
+       ||> List.fold (fun (i, acc) x -> (i+1, folder i acc x))
+       |> snd
 
     let foldBacki fold xs state =
        (xs, (state, (List.length xs - 1)))
